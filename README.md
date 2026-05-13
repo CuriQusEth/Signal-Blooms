@@ -1,20 +1,45 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Signal Bloom
 
-# Run and deploy your AI Studio app
+Signal Bloom is a serene and visually breathtaking signal-flow garden game integrating on-chain interactions on Base Mainnet.
 
-This contains everything you need to run your app locally.
+## Game Concept
+You are a **Signal Bloom Weaver** who sends glowing signals through a mystical digital garden to make flowers bloom, crystals resonate, and the entire landscape come alive with beautiful cascading light. 
 
-View your app in AI Studio: https://ai.studio/apps/03412675-46f4-4a0f-8f6b-b6477e57fbe6
+**Core Gameplay:**
+- Tap and drag to send colorful Signal Pulses across the garden.
+- Connections trigger blooming light effects, resonance patterns, and cascade blooms.
+- Unlock varied signal types such as Light, Pulse, Resonance, Prism, and Void.
+- Enjoy an ethereal garden environment with a soothing palette and reactive ambient interactions.
 
-## Run Locally
+## Features
+- **Mobile First:** Optimized for portrait mobile screens and PWA-ready.
+- **Canvas-based:** Custom particle engine representing the signal physics and bloom simulations.
+- **On-chain Integrations:** 
+  - **Most Beautiful Garden / Highest Bloom Score** via SIWE signatures.
+  - **ERC-8021 Transaction Attribution System** integrations.
+  - **ERC-8004 Trustless Agents** functionality via an embedded orchestrator.
+  - Integrates `wagmi` and `viem` directly with the Base Mainnet.
 
-**Prerequisites:**  Node.js
+## Trustless Agent Integrations (ERC-8004)
+Signal Bloom hosts an active Trustless Agent via MCP (Model Context Protocol).
+- **A2A Endpoint:** `/.well-known/agent-card.json`
+- **MCP API:** `/api/mcp`
+- **Agent control API:** `/api/agent`
 
+These endpoints allow agentic frameworks to detect, recognize patterns, orchestrate bloom automation, and intelligently execute multi-signal growth on behalf of users.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Build the project
+npm run build
+
+# Start the production server
+npm run start
+```
