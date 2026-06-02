@@ -22,43 +22,53 @@ export default async function handler(req: Request) {
   if (req.method === 'POST') {
     try {
       const body = await req.json();
-      const { method, params } = body || {};
+      const { method, params, id, jsonrpc } = body || {};
+      const rpcId = id !== undefined ? id : null;
+      const rpcVersion = jsonrpc || "2.0";
 
       // Standard MCP method routing
       if (method === 'tools/list') {
         return Response.json({
-          tools: [
-            { name: "get_race_status", description: "Get the current race status" },
-            { name: "start_race", description: "Start a new race" },
-            { name: "get_leaderboard", description: "Get the race leaderboard" },
-            { name: "optimize_speed", description: "Optimize speed for the race" },
-            { name: "get_track_info", description: "Get track information" }
-          ]
+          jsonrpc: rpcVersion,
+          id: rpcId,
+          result: {
+            tools: [
+              { name: "get_race_status", description: "Get the current race status", inputSchema: { type: "object", properties: {} } },
+              { name: "start_race", description: "Start a new race", inputSchema: { type: "object", properties: {} } },
+              { name: "get_leaderboard", description: "Get the race leaderboard", inputSchema: { type: "object", properties: {} } },
+              { name: "optimize_speed", description: "Optimize speed for the race", inputSchema: { type: "object", properties: {} } },
+              { name: "get_track_info", description: "Get track information", inputSchema: { type: "object", properties: {} } }
+            ]
+          }
         }, { headers: corsHeaders() });
       }
 
       if (method === 'tools/call') {
         return Response.json({
-          status: "success",
-          result: `Executed ${params?.name || 'tool'} successfully`
+          jsonrpc: rpcVersion,
+          id: rpcId,
+          result: {
+            content: [{ type: "text", text: `Executed ${params?.name || 'tool'} successfully` }]
+          }
         }, { headers: corsHeaders() });
       }
 
       if (method === 'prompts/list') {
-        return Response.json({ prompts: [] }, { headers: corsHeaders() });
+        return Response.json({ jsonrpc: rpcVersion, id: rpcId, result: { prompts: [] } }, { headers: corsHeaders() });
       }
 
       if (method === 'resources/list') {
-        return Response.json({ resources: [] }, { headers: corsHeaders() });
+        return Response.json({ jsonrpc: rpcVersion, id: rpcId, result: { resources: [] } }, { headers: corsHeaders() });
       }
 
       // Default MCP POST handler
       return Response.json({
-        status: "success",
-        message: "MCP command received",
-        agent: "Signal Blooms Orchestrator",
-        receivedAt: new Date().toISOString(),
-        payload: body
+        jsonrpc: rpcVersion,
+        id: rpcId,
+        result: {
+          status: "success",
+          message: "MCP command received"
+        }
       }, { headers: corsHeaders() });
 
     } catch (error) {

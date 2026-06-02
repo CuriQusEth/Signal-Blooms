@@ -36,6 +36,15 @@
     "bloom-automation",
     "mcp-command-execution"
   ],
+  "skills": [
+    "signal-blooming",
+    "pattern-recognition",
+    "multi-signal-growth",
+    "intelligent-orchestration",
+    "trend-detection",
+    "bloom-automation",
+    "mcp-command-execution"
+  ],
   "supportedChains": ["eip155:8453"],
   "active": true,
   "status": "online"

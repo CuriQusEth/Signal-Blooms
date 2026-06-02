@@ -55,46 +55,56 @@ async function startServer() {
   app.post("/api/mcp", (req, res) => {
     try {
       const body = req.body || {};
-      const { method, params } = body;
+      const { method, params, id, jsonrpc } = body;
+      const rpcId = id !== undefined ? id : null;
+      const rpcVersion = jsonrpc || "2.0";
 
       // Handle MCP tools/list to fix "no skills found" error
       if (method === 'tools/list') {
         res.json({
-          tools: [
-            { name: "get_race_status", description: "Get the current race status" },
-            { name: "start_race", description: "Start a new race" },
-            { name: "get_leaderboard", description: "Get the race leaderboard" },
-            { name: "optimize_speed", description: "Optimize speed for the race" },
-            { name: "get_track_info", description: "Get track information" }
-          ]
+          jsonrpc: rpcVersion,
+          id: rpcId,
+          result: {
+            tools: [
+              { name: "get_race_status", description: "Get the current race status", inputSchema: { type: "object", properties: {} } },
+              { name: "start_race", description: "Start a new race", inputSchema: { type: "object", properties: {} } },
+              { name: "get_leaderboard", description: "Get the race leaderboard", inputSchema: { type: "object", properties: {} } },
+              { name: "optimize_speed", description: "Optimize speed for the race", inputSchema: { type: "object", properties: {} } },
+              { name: "get_track_info", description: "Get track information", inputSchema: { type: "object", properties: {} } }
+            ]
+          }
         });
         return;
       }
 
       if (method === 'tools/call') {
         res.json({
-          status: "success",
-          result: `Executed ${params?.name || 'tool'} successfully`
+          jsonrpc: rpcVersion,
+          id: rpcId,
+          result: {
+            content: [{ type: "text", text: `Executed ${params?.name || 'tool'} successfully` }]
+          }
         });
         return;
       }
 
       if (method === 'prompts/list') {
-        res.json({ prompts: [] });
+        res.json({ jsonrpc: rpcVersion, id: rpcId, result: { prompts: [] } });
         return;
       }
 
       if (method === 'resources/list') {
-        res.json({ resources: [] });
+        res.json({ jsonrpc: rpcVersion, id: rpcId, result: { resources: [] } });
         return;
       }
 
       res.json({
-        status: "success",
-        message: "MCP command received",
-        agent: "Signal Blooms Orchestrator",
-        receivedAt: new Date().toISOString(),
-        payload: body
+        jsonrpc: rpcVersion,
+        id: rpcId,
+        result: {
+          status: "success",
+          message: "MCP command received"
+        }
       });
     } catch (error) {
       res.status(400).json({ error: "Invalid MCP request" });
