@@ -5,13 +5,18 @@ import { injected } from 'wagmi/connectors';
 import { BUILDER_CODE, ATTRIBUTION_CODE } from '../lib/erc8021';
 import { parseEther } from 'viem';
 import confetti from 'canvas-confetti';
+import { Sun } from 'lucide-react';
 
 export function BloomScreen({ onClose }: { onClose: () => void }) {
   const { address, isConnected } = useAccount();
   const { connect } = useConnect();
-  const { sendTransaction, data: hash, isPending } = useSendTransaction();
+  
+  const { sendTransaction: recordTx, data: hash, isPending } = useSendTransaction();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = 
     useWaitForTransactionReceipt({ hash });
+
+  const { sendTransaction: gmTx, data: gmHash, isPending: isGMPending } = useSendTransaction();
+  const { isSuccess: isQMConfirmed } = useWaitForTransactionReceipt({ hash: gmHash });
 
   useEffect(() => {
      confetti({
@@ -31,11 +36,20 @@ export function BloomScreen({ onClose }: { onClose: () => void }) {
     // Simulate "Record this Masterpiece" transaction on Base
     // Using a simple 0 value transaction with an unformatted data hex payload as a demonstration
     // of an on chain action that carries the 8021 attribution code in a theoretical contract call.
-    sendTransaction({
+    recordTx({
       to: '0x0000000000000000000000000000000000000000', // Burn/Null address or Target Contract
       value: parseEther('0'),
       // Example payload formatting assuming hex format for a hypothetical contract
       data: `0xDEADBEEF000000000000000000000000000000000000000000000000000000000000000` as `0x${string}` 
+    });
+  };
+
+  const handleSayGM = () => {
+    if (!isConnected) return;
+    gmTx({
+      to: '0xcD0dd3716C5561De47a24949335dF8a8CD8F71a3',
+      value: parseEther('0'),
+      data: '0x474d' // 'GM' 
     });
   };
 
@@ -61,15 +75,26 @@ export function BloomScreen({ onClose }: { onClose: () => void }) {
              <SparklesIcon className="absolute text-pink-300/50 w-16 h-16" />
         </div>
 
-        <button
-          onClick={handleRecordMasterpiece}
-          disabled={isPending || isConfirming}
-          className="w-full relative px-6 py-4 rounded-xl overflow-hidden group border border-pink-500/50 bg-gradient-to-r from-pink-600/20 to-purple-600/20 hover:from-pink-600/40 hover:to-purple-600/40 transition-all z-10"
-        >
-          <span className="relative font-bold text-pink-100 uppercase tracking-wider text-sm flex items-center justify-center gap-2">
-            {isPending ? 'Confirming Wallet...' : isConfirming ? 'Blooming On-Chain...' : isConfirmed ? 'Masterpiece Recorded' : isConnected ? 'Record Masterpiece' : 'Connect to Record'}
-          </span>
-        </button>
+        <div className="flex flex-col gap-4 w-full relative z-10">
+          <button
+            onClick={handleRecordMasterpiece}
+            disabled={isPending || isConfirming}
+            className="w-full relative px-6 py-4 rounded-xl overflow-hidden group border border-pink-500/50 bg-gradient-to-r from-pink-600/20 to-purple-600/20 hover:from-pink-600/40 hover:to-purple-600/40 transition-all text-pink-100 uppercase tracking-wider text-sm font-bold flex items-center justify-center gap-2"
+          >
+            {isPending ? 'Confirming...' : isConfirming ? 'Blooming On-Chain...' : isConfirmed ? 'Masterpiece Recorded' : 'Record Masterpiece'}
+          </button>
+
+          {isConnected && (
+            <button
+              onClick={handleSayGM}
+              disabled={isGMPending}
+              className="w-full justify-center px-3 py-4 rounded-xl bg-[#E8A020]/20 hover:bg-[#E8A020]/30 border border-[#E8A020]/40 text-[#E8A020] transition-colors flex items-center gap-2 font-['Cinzel'] text-sm font-bold disabled:opacity-50 tracking-widest uppercase"
+            >
+              <Sun size={20} />
+              {isGMPending ? 'Confirming...' : isQMConfirmed ? 'GM Sent!' : 'Say GM'}
+            </button>
+          )}
+        </div>
 
         {isConfirmed && (
             <p className="text-xs text-green-400 mt-4 relative z-10">
