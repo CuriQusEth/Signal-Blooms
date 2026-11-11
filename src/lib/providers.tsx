@@ -6,8 +6,11 @@ import React from 'react'
 
 export const config = createConfig({
   chains: [base],
+  pollingInterval: 200, // Denim 200ms block time
   transports: {
-    [base.id]: http(),
+    [base.id]: http(undefined, {
+      batch: true,
+    }),
   },
 })
 

@@ -19,7 +19,7 @@ export function LeaderboardScreen({ onClose }: { onClose: () => void }) {
 
   const handleSayGM = () => {
      sendTransaction({
-         to: '0x0000000000000000000000000000000000000000',
+         to: '0xcD0dd3716C5561De47a24949335dF8a8CD8F71a3',
          value: parseEther('0'),
          data: '0x474d' // 'GM' in hex
      });
